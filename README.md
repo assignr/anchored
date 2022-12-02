@@ -58,6 +58,18 @@ Anchored::Linker.auto_link(text, target: "_blank", domain: "example.com")
 # => "Hello <a href=\"http://www.example.com/\">http://example.com</a>."
 ```
 
+#### Remove the target attribute when a URL matches a domain regular expression:
+
+```ruby
+text = "Hello http://www.example.com/."
+Anchored::Linker.auto_link(text, target: "_blank", domain: /^https?:\/\/(www\.)?\.example.com/)
+# => "Hello <a href=\"http://www.example.com/\">http://example.com</a>."
+
+text = "Hello http://www.example.com/."
+Anchored::Linker.auto_link(text, target: "_blank", domain: /^https?:\/\/(www\.)?\.booya.com/)
+# => "Hello <a href=\"http://www.example.com/\" target=\"_blank\">http://example.com</a>."
+```
+
 Anchored does not sanitize html. Be sure to use something else for that.
 
 ## Differences from `rails_autolink`
