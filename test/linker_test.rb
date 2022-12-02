@@ -115,7 +115,7 @@ class LinkerTest < Minitest::Test
     assert_equal %(#{link_result} #{link_result}), auto_link(%(#{link_result} #{link_raw}))
 
     link2_raw    = "www.rubyonrails.com"
-    link2_result = generate_result(link2_raw, "http://#{link2_raw}")
+    link2_result = generate_result(link2_raw, "https://#{link2_raw}")
     assert_equal %(Go to #{link2_result}), auto_link("Go to #{link2_raw}")
     assert_equal %(<p>Link #{link2_result}</p>), auto_link("<p>Link #{link2_raw}</p>")
     assert_equal %(<p>#{link2_result} Link</p>), auto_link("<p>#{link2_raw} Link</p>")
@@ -252,6 +252,16 @@ class LinkerTest < Minitest::Test
 
     assert_equal %(hello <a href="http://example.com/x" target="_blank">http://example.com/x</a>.),
       Anchored::Linker.auto_link("hello http://example.com/x.", target: "_blank", domain: "ample.com")
+
+    assert_equal %(hello <a href="http://example.com/x">http://example.com/x</a>.),
+      Anchored::Linker.auto_link("hello http://example.com/x.", target: "_blank", domain: /\/\/example\.com/)
+
+    assert_equal %(hello <a href="http://example.com/x">http://example.com/x</a>.),
+      Anchored::Linker.auto_link("hello http://example.com/x.", target: "_blank", domain: /\/\/(www\.)?example\.com/)
+
+    assert_equal %(hello <a href="http://example.com/x" target="_blank">http://example.com/x</a>.),
+      Anchored::Linker.auto_link("hello http://example.com/x.", target: "_blank", domain: /\/\/booya\.com/)
+
   end
 
   def test_autolink_options_with_many

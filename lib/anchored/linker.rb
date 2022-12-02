@@ -12,13 +12,20 @@ module Anchored
     # remove_target_if_local("http://same.com/x", "same.com", target: "_blank")
     # => <a href="http://same.com/x">http://same.com/x</a>
     #
+    # remove_target_if_local("http://same.com/x", /\/\/[a-z]+\.same.com/, target: "_blank")
+    # => <a href="http://same.com/x">http://same.com/x</a>
+    #
     # remove_target_if_local("http://same.com/x", "different.com", target: "_blank")
     # => <a href="http://same.com/x" target="_blank">http://same.com/x</a>
     #
     # modifies options in place
     def remove_target_if_local(href, domain, options)
       return unless options[:target]
-      options.delete(:target) if href.include?("//#{domain}")
+      if domain.is_a?(Regexp)
+        options.delete(:target) if href =~ domain 
+      else 
+        options.delete(:target) if href.include?("//#{domain}")
+      end
     end
 
     private
@@ -56,7 +63,7 @@ module Anchored
           end
 
           link_text = block_given? ? yield(href) : href
-          href = "http://" + href unless scheme
+          href = "https://" + href unless scheme
 
           # content_tag(:a, link_text, html.merge(href: href)) + punctuation.reverse.join('')
           anchor_tag(href, link_text, options) + punctuation.reverse.join
